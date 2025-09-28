@@ -8,6 +8,7 @@ use Firebase\JWT\JWT;
 use Github\Client;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Psr\Http\Client\ClientExceptionInterface;
+use RuntimeException;
 
 /**
  * Authenticate a GitHub Client as a GitHub App installation.
@@ -39,12 +40,12 @@ final readonly class GitHubAppAuthenticator
         try {
             $response = $http->sendRequest($request);
         } catch (ClientExceptionInterface $e) {
-            throw new \RuntimeException('Failed to request installation token: '.$e->getMessage(), 0, $e);
+            throw new RuntimeException('Failed to request installation token: '.$e->getMessage(), 0, $e);
         }
 
         $data = json_decode((string) $response->getBody(), true);
         if (! is_array($data) || ! isset($data['token'])) {
-            throw new \RuntimeException('Invalid response when requesting installation token.');
+            throw new RuntimeException('Invalid response when requesting installation token.');
         }
 
         $this->client->authenticate($data['token'], null, Client::AUTH_ACCESS_TOKEN);

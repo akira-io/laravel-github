@@ -8,7 +8,7 @@ use Akira\GitHub\DTO\UserDTO;
 use Github\Client;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
-readonly class GitHubManager
+final readonly class GitHubManager
 {
     public function __construct(
         private Client $client,
