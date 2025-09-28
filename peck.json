@@ -2,7 +2,11 @@
     "preset": "base",
     "ignore": {
         "words": [
-            "php"
-        ]
+            "php",
+            "dto",
+            "repos",
+            "akira"
+        ],
+        "paths": []
     }
 }
