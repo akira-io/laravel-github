@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": "^8.4.0",
+        "firebase/php-jwt": "^6.11",
         "knplabs/github-api": "^3.16"
     },
     "require-dev": {
