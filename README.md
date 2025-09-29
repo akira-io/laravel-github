@@ -1,47 +1,189 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/nunomaduro/skeleton-php/master/docs/example.png" height="300" alt="Skeleton Php">
-    <p align="center">
-        <a href="https://github.com/nunomaduro/skeleton-php/actions"><img alt="GitHub Workflow Status (master)" src="https://github.com/nunomaduro/skeleton-php/actions/workflows/tests.yml/badge.svg"></a>
-        <a href="https://packagist.org/packages/nunomaduro/skeleton-php"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/nunomaduro/skeleton-php"></a>
-        <a href="https://packagist.org/packages/nunomaduro/skeleton-php"><img alt="Latest Version" src="https://img.shields.io/packagist/v/nunomaduro/skeleton-php"></a>
-        <a href="https://packagist.org/packages/nunomaduro/skeleton-php"><img alt="License" src="https://img.shields.io/packagist/l/nunomaduro/skeleton-php"></a>
-    </p>
-</p>
+# Laravel GitHub
 
-------
-This package provides a wonderful **PHP Skeleton** to start building your next package idea.
+A Laravel 12+ package to interact with the GitHub REST and GraphQL APIs using a strongly-typed, collection-friendly
+interface.
 
-> **Requires [PHP 8.4+](https://php.net/releases/)**
+This package provides:
 
-⚡️ Create your package using [Composer](https://getcomposer.org):
+- Fully typed DTOs for common GitHub resources (users, repos, issues, PRs, actions, packages, dependabot, etc.).
+- High-level service `GitHubManager` with caching and rate limiting.
+- Artisan commands to quickly query GitHub resources.
+- 100% test coverage with Pest and static analysis with Larastan.
+
+---
+
+## Installation
 
 ```bash
-composer create-project nunomaduro/skeleton-php --prefer-dist PackageName
+composer require akira/laravel-github
+php artisan vendor:publish --tag=config --provider="Akira\\GitHub\\GitHubServiceProvider"
 ```
 
-🧹 Keep a modern codebase with **Pint**:
+---
+
+## Configuration
+
+```php
+return [
+    'token' => env('GITHUB_TOKEN', null),
+    'cache' => [
+        'ttl' => 300,
+        'prefix' => 'github:',
+        'ttls' => [
+            'issues' => 60,
+            'pulls' => 60,
+            'releases' => 300,
+        ],
+    ],
+    'pagination' => ['per_page' => 30],
+    'rate_limiter' => ['max' => 60, 'decay_seconds' => 60],
+    'events' => true,
+];
+```
+
+---
+
+## Usage Examples
+
+### Users
+
+```php
+$user = GitHub::user('octocat');
+$repos = GitHub::userRepos('octocat');
+```
+
+### Repositories
+
+```php
+$repo = GitHub::repo('akira', 'hunter');
+```
+
+### Issues
+
+```php
+$issues = GitHub::issues('akira', 'hunter');
+$new = GitHub::createIssue('akira', 'hunter', 'Bug', 'Description');
+GitHub::commentOnIssue('akira', 'hunter', $new->number, 'Working on it!');
+```
+
+### Pull Requests
+
+```php
+$prs = GitHub::pulls('akira', 'hunter');
+```
+
+### Releases
+
+```php
+$releases = GitHub::releases('akira', 'hunter');
+```
+
+### Organizations and Teams
+
+```php
+$org = GitHub::organization('akira-io');
+$repos = GitHub::orgRepos('akira-io');
+$teams = GitHub::teams('akira-io');
+```
+
+### Gists
+
+```php
+$gists = GitHub::gists('octocat');
+$gist = GitHub::gist('123');
+```
+
+### GitHub Actions
+
+```php
+$runs = GitHub::actionsWorkflowRuns('akira', 'hunter');
+GitHub::actionsRerun('akira', 'hunter', $runs[0]->id);
+GitHub::actionsCancel('akira', 'hunter', $runs[0]->id);
+GitHub::actionsDownloadArtifact('akira', 'hunter', $runs[0]->id, storage_path('artifact.zip'));
+```
+
+### Checks
+
+```php
+$checks = GitHub::checksForRef('akira', 'hunter', 'main');
+```
+
+### Packages
+
+```php
+$packages = GitHub::orgPackages('akira-io', 'container');
+```
+
+### Dependabot Alerts
+
+```php
+$alerts = GitHub::dependabotAlerts('akira', 'hunter');
+```
+
+### Projects V2 (GraphQL)
+
+```php
+$projects = GitHub::projectsV2('akira');
+```
+
+### Webhook Verification
+
+```php
+$isValid = GitHub::verifyWebhookSignature($secret, $payload, $signature);
+```
+
+---
+
+## Artisan Commands
+
 ```bash
-composer lint
+php artisan github:user octocat
+php artisan github:repo akira hunter
+php artisan github:issue:list akira hunter
+php artisan github:pr:list akira hunter
+php artisan github:actions:runs akira hunter --per_page=5
 ```
 
-✅ Run refactors using **Rector**
-```bash
-composer refactor
+---
+
+## 📚 Documentation
+
+This package also includes a dedicated `docs/` folder with extended details:
+
+- Installation — [docs/installation.md](docs/installation.md)
+- Configuration — [docs/configuration.md](docs/configuration.md)
+- Usage — [docs/usage.md](docs/usage.md)
+- Commands — [docs/commands.md](docs/commands.md)
+- Advanced Topics — [docs/advanced.md](docs/advanced.md)
+- Contributing — [docs/contributing.md](docs/contributing.md)
+- Roadmap — [docs/roadmap.md](docs/roadmap.md)
+
+---
+
+## Project Structure
+
+```
+laravel-github/
+├── src/                # Package source code
+├── tests/              # Pest test suite
+├── docs/               # Extended documentation
+├── README.md           # Quick start & inline docs
+├── composer.json
+└── pest.php / phpunit.xml
 ```
 
-⚗️ Run static analysis using **PHPStan**:
-```bash
-composer test:types
-```
+---
 
-✅ Run unit tests using **PEST**
-```bash
-composer test:unit
-```
+## Contributing
 
-🚀 Run the entire test suite:
-```bash
-composer test
-```
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/my-feature`)
+3. Run tests (`composer test`)
+4. Ensure code style and static analysis pass (`composer analyse`)
+5. Submit a PR
 
-**Skeleton PHP** was created by **[Nuno Maduro](https://x.com/enunomaduro)** under the **[MIT license](https://opensource.org/licenses/MIT)**.
+---
+
+## License
+
+MIT
