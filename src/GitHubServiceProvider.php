@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Akira\GitHub;
 
-use Akira\GitHub\Services\GitHubManager;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -31,6 +30,12 @@ final class GitHubServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
+                Console\UserCommand::class,
+                Console\RepoCommand::class,
+                Console\IssueListCommand::class,
+                Console\PrListCommand::class,
+                Console\ActionsRunsCommand::class,
+                Console\MakeWebhookControllerCommand::class,
             ]);
         }
 

@@ -7,6 +7,7 @@ namespace Akira\GitHub\Support;
 use Akira\GitHub\Events\RateLimited;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use RuntimeException;
+use Throwable;
 
 /**
  * Simple cache-backed rate limiter for application-side throttling.
@@ -25,8 +26,6 @@ final readonly class RateLimiter
      *
      * @param  string  $key  Logical rate limit key
      * @param  callable  $callback  Callback to execute
-     *
-     * @throws RuntimeException when the limit is exceeded
      */
     public function attempt(string $key, callable $callback): mixed
     {
@@ -34,7 +33,15 @@ final readonly class RateLimiter
         $count = (int) $this->cache->get($bucket, 0);
 
         if ($count >= $this->max) {
-            event(new RateLimited($key, $this->max, $this->decaySeconds));
+            // Fire event only if dispatcher is available
+            try {
+                if (function_exists('event')) {
+                    event(new RateLimited($key, $this->max, $this->decaySeconds));
+                }
+            } catch (Throwable) {
+                // ignore if no container is booted
+            }
+
             throw new RuntimeException('GitHub rate limit reached for '.$key);
         }
 

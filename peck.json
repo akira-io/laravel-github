@@ -5,7 +5,16 @@
             "php",
             "dto",
             "repos",
-            "akira"
+            "akira",
+            "authenticator",
+            "dependabot",
+            "pem",
+            "dt",
+            "ql",
+            "dest",
+            "gists",
+            "graphql",
+            "sha"
         ],
         "paths": []
     }

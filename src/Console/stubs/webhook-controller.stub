@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DummyNamespace;
+
+use Akira\GitHub\Facades\GitHub;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+
+/**
+ * Generated controller for handling GitHub webhooks.
+ */
+final class DummyClass extends Controller
+{
+    public function __invoke(Request $request)
+    {
+        $signature = (string) $request->header('X-Hub-Signature-256');
+        $payload = $request->getContent();
+
+        abort_unless(GitHub::verifyWebhookSignature(config('services.github.webhook_secret', env('GITHUB_WEBHOOK_SECRET')), $payload, $signature), 401, 'Invalid signature');
+
+        return response()->json(['ok' => true]);
+    }
+}
