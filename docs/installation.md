@@ -1,6 +1,6 @@
 # Installation
 
-Require the package:
+Require the package via Composer:
 
 ```bash
 composer require akira/laravel-github
@@ -12,7 +12,9 @@ Publish the configuration:
 php artisan vendor:publish --tag=config --provider="Akira\\GitHub\\GitHubServiceProvider"
 ```
 
-Run migrations if needed (future features may include GitHub sync tables):
+This will create a `config/github.php` file.
+
+Optionally, run migrations in case future versions include database tables for GitHub sync:
 
 ```bash
 php artisan migrate

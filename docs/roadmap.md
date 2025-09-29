@@ -1,6 +1,6 @@
 # Roadmap
 
-Planned enhancements for future versions:
+Planned enhancements for future releases:
 
 - Support for GitHub Codespaces API
 - Support for GitHub Projects v3

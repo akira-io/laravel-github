@@ -1,14 +1,15 @@
 # Advanced Topics
 
 ## Rate Limiting
-
-All write operations are wrapped with an application-side rate limiter to avoid hitting GitHub abuse detection.
+All write operations are wrapped in an application-side rate limiter to avoid hitting GitHub API abuse detection.
 
 ## Events
-
-- `Akira\\GitHub\\Events\\RequestSending` is fired before a REST request.
-- `Akira\\GitHub\\Events\\RateLimited` is fired when the custom limiter blocks a call.
+- `RequestSending`: Fired before a REST request is sent.
+- `RateLimited`: Fired when the custom limiter blocks a call.
 
 ## Testing
+The package ships with:
+- `FakeRest`: Simulates GitHub REST endpoints.
+- `StubGithubClient`: Simulates client sub-APIs.
 
-The package ships with `FakeRest` and `StubGithubClient` for predictable testing without hitting real GitHub APIs.
+This enables full test coverage without accessing the real GitHub API.
